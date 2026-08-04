@@ -1,0 +1,220 @@
+/* Reset defaults */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: hidden; /* Prevents manual scrolling */
+    font-family: 'montserrat', sans-serif;
+    color: white;
+}
+
+/* The horizontal track that slides */
+#wrapped-container {
+    display: flex;
+    width: 700vw; /* INCREASE WHEN ADDING MORE SLIDES!! 100vw * Number of slides */
+    height: 100vh;
+    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); /* Smooth snap effect */
+}
+
+/* Individual screens */
+.slide {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+    position: relative; /* REQUIRED for absolute positioning inside it */
+    overflow: hidden;   /* Stops the cut-out from spilling onto the next slide */
+    isolation: isolate; /* Keeps the cut-outs behind the foreground content */
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 20; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Base styling for all cut-outs */
+.cutout {
+    position: absolute;
+    z-index: 0; /* Sits behind the content-wrapper */
+    height: 45vh; /* Scales nicely based on screen height */
+    pointer-events: none; /* Ensures you can still click buttons even if the invisible part of the image covers them */
+}
+
+/* Positioning specific cut-outs */
+.cutout-left {
+    bottom: -5%; /* Tucks it slightly off the bottom edge */
+    left: -10%;  /* Tucks it slightly off the left edge */
+    max-height: 45vh; /* Ensures it doesn't exceed the viewport height */
+}
+
+.cutout-right { /* For cut-outs that should appear on the right side */
+    top: -1%;
+    right: -10%;
+    transform: scaleY(-1); /* Flips the image horizontally */
+    z-index: 1;     /* A lower number means it will sit BEHIND the main photo */
+    pointer-events: none; /* Keeps it from blocking mouse clicks */
+    
+}
+
+/* This class only does one job: flips the image */
+.flip-image-only {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: scaleX(-1); 
+}
+
+
+/* The Entrance Animation for Cut-outs */
+.animate-slide-in {
+    opacity: 0;
+    transform: translateX(-50px) scale(0.9); /* Starts off-center and slightly small */
+    transition: opacity 1s cubic-bezier(0.25, 1, 0.5, 1), 
+                transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+    transition-delay: 0.3s; /* Delays it so the text appears first, then the image slides in */
+}
+
+.animate-slide-in.is-visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+/* Image styling */
+.memory-photo {
+    max-width: 80%;
+    max-height: 50vh;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    margin-bottom: 1rem;
+    
+    position: relative; 
+    z-index: 5; /* This pushes the main photo to the front */
+}
+
+/* Typography & Buttons */
+h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 20;
+    font-weight: 800; 
+    text-shadow:  
+    -1px -1px 0 rgba(0,0,0,0.4),  
+     1px -1px 0 rgba(0,0,0,0.4),
+    -1px  1px 0 rgba(0,0,0,0.4),
+     1px  1px 0 rgba(0,0,0,0.4),
+     0px  4px 10px rgba(0,0,0,0.3);
+}
+
+/* Button Layout */
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 20;
+}
+
+/* Back Button Styling (Ghost Button) */
+.back-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white; /* Matches the text */
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent */
+    border: 2px solid white;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.back-btn:active {
+    transform: scale(0.95);
+}
+
+.next-btn {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: black;
+    background-color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.next-btn:active {
+    transform: scale(0.95);
+}
+
+/* 1. The starting state (Hidden) */
+.animate-on-enter {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95); /* Pushed down 40px and shrunk by 5% */
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 2. The ending state (Visible) - JS will add this class */
+.animate-on-enter.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1); /* Snaps back to normal */
+}
+
+/* Optional: Stagger the text so the photo appears a split second before the quote */
+h2.animate-on-enter {
+    transition-delay: 0.2s;
+}
+
+
+/* Example Background Colors */
+/* Soft, cohesive, dreamy pastels */
+.bg-color-1 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); } /* Your original Rose Pink */
+.bg-color-2 { background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); } /* Lilac to Baby Blue */
+.bg-color-3 { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); } /* Your original Soft Blue */
+.bg-color-4 { background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); } /* Soft Matcha Green */
+.bg-color-5 { background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); } /* Clean Cloud White */
+.bg-color-6 { background: linear-gradient(135deg, #dfbc8c 0%, #fcb69f 100%); } /* Warm Peach */
+.bg-color-7 { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); } /* Sunset Orange */
+.slide-bottom {
+    justify-content: flex-start; /* Aligns content starting from the top */
+    padding: 0;
+}
+
+/* 2. Keep the text padded and centered at the top */
+.top-text-wrapper {
+    padding: 1rem 2rem 0; /* Adds spacing back to just the text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    margin-top: 5vh; /* Adds a little breathing room at the very top */
+}
+
+/* 3. Make the image fill the bottom space */
+.bottom-fill-photo {
+    width: 100%;
+    height: 55vh; /* Takes up just over half the screen height */
+    object-fit: cover; /* Fills the space without distorting the image */
+    margin-top: auto; /* THE MAGIC TRICK: Pushes the image to the absolute bottom */
+    border-radius: 30px 30px 0 0; /* Rounds only the top corners, leaves bottom flat */
+    position: relative;
+    margin-bottom: 0; /* Ensures it touches the very bottom of the viewport */ 
+    object-position: top; /* This forces the browser to keep the top of the photo in frame and only crop the bottom */
+    z-index: 5; /* Pushes the main image in front of the z-index: 1 cut-outs */
+}
